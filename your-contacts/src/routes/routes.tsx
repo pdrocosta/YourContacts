@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { CreateClientController,DeleteClientController, GetClientController, UpdateClientController } from "../controllers/clients.controller";
+import { CreateClientController,DeleteClientController, GetClientsController, UpdateClientController } from "../controllers/clients.controller";
 import {  CreateContactController, DeleteContactsController, GetContactsController, UpdateContactsController } from "../controllers/contacts.controller";
+import { LoginController } from "../controllers/login.controller";
 
 const clientRoutes = Router()
 
 clientRoutes.post("", CreateClientController)
-clientRoutes.get("", GetClientController)
+clientRoutes.get("", GetClientsController)
 clientRoutes.patch("/:id", UpdateClientController)
 clientRoutes.delete("/:id", DeleteClientController)
 

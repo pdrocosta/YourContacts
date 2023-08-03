@@ -1,25 +1,25 @@
 import { Response, Request } from "express";
 import { createClientService } from "../services/clients.services";
 
-const CreateContactController = async (req: Request, res: Response) => {
+const CreateContactController = async (req: Request, res: Response): Promise<Response> => {
     const newClient = await createClientService(req.body)
 
     return res.status(201).json(newClient)
 }
 
-const GetContactsController = async (req: Request, res: Response) => {
+const GetContactsController = async (req: Request, res: Response): Promise<Response> => {
     const newClient = await createClientService(req.body)
 
     return res.status(201).json(newClient)
 }
 
-const DeleteContactsController = async (req: Request, res: Response) => {
+const DeleteContactsController = async (req: Request, res: Response): Promise<Response> => {
     const newClient = await createClientService(req.body)
 
     return res.status(201).json(newClient)
 }
 
-const UpdateContactsController = async (req: Request, res: Response) => {
+const UpdateContactsController = async (req: Request, res: Response): Promise<Response> => {
     const newClient = await createClientService(req.body)
 
     return res.status(201).json(newClient)

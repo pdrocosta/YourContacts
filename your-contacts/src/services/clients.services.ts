@@ -1,12 +1,14 @@
-import { AppDataSource } from "../../data-source";
-import { Client } from "../../entities/Client.entitie";
-import { AppError } from "../../errors/AppError";
-import { ClientSchemaResponse } from "../../schemas/clients.schema";
+import { Repository } from "typeorm";
+import { TClient, TClientRequest, TClients } from "../interfaces/interfaces";
+import { clientsSchema } from "../schemas/client.schema";
+import { Client } from "../entities/client.entitie";
+import { AppError } from "../error";
+import { AppDataSource } from "../data-source";
 
 
 
-const createClientService = async (data: TClientRequest): Promise<TClientResponse> => {
-    const { email } = data
+const createClientService = async (data: TClientRequest): Promise<string> => {
+    const { email, name, telephone } = data
     const ClientRepository = AppDataSource.getRepository(Client)
     const findClient = await ClientRepository.findOne({
         where: {
@@ -19,74 +21,54 @@ const createClientService = async (data: TClientRequest): Promise<TClientRespons
     }
 
     const client = ClientRepository.create({
-        data
+        email, name, telephone
     })
 
     await ClientRepository.save(client)
-    return ClientSchemaResponse.parse(client)
+    return "New client created"
 }
 
-const GetClientService = async (data: TClientRequest): Promise<TClientResponse> => {
-    const { email } = data
-    const ClientRepository = AppDataSource.getRepository(Client)
-    const findClient = await ClientRepository.findOne({
-        where: {
-            email
-        }
-    })
+const GetClientsService = async (): Promise<TClients> => {
+    const ClientRepository: Repository<Client> = AppDataSource.getRepository(Client)
+    const clients: Client[] = await ClientRepository.find()
+    const returnClients: TClients = clientsSchema.parse(clients)
+    return returnClients
+}
 
-    if (findClient) {
-        throw new AppError("Client already exists", 409)
+const UpdateClientService = async (data: TClientRequest, id: number): Promise<TClient> => {
+    const ClientRepository = AppDataSource.getRepository(Client)
+    const client: TClient | null = await ClientRepository.findOneBy({ id: id })
+
+    if (!client) {
+        throw new AppError("Client not found", 401)
     }
 
-    const client = ClientRepository.create({
-        data
-    })
+    const clientInfos = ({ ...client })
 
-    await ClientRepository.save(client)
-    return ClientSchemaResponse.parse(client)
-}
-
-const UpdateClientService = async (data: TClientRequest): Promise<TClientResponse> => {
-    const { email } = data
-    const ClientRepository = AppDataSource.getRepository(Client)
-    const findClient = await ClientRepository.findOne({
-        where: {
-            email
-        }
-    })
-
-    if (findClient) {
-        throw new AppError("Client already exists", 409)
+    if (data.email) {
+        clientInfos.email = data.email
+    }
+    if (data.name) {
+        clientInfos.name = data.name
+    }
+    if (data.telephone) {
+        clientInfos.telephone = data.telephone
     }
 
-    const client = ClientRepository.create({
-        data
-    })
-
-    await ClientRepository.save(client)
-    return ClientSchemaResponse.parse(client)
+    const saveNewInfos = await ClientRepository.save(clientInfos);
+    return saveNewInfos
 }
 
-const DeleteClientService = async (data: TClientRequest): Promise<TClientResponse> => {
-    const { email } = data
+
+const DeleteClientService = async (id: number): Promise<string> => {
     const ClientRepository = AppDataSource.getRepository(Client)
-    const findClient = await ClientRepository.findOne({
-        where: {
-            email
-        }
-    })
+    const client: TClient | null = await ClientRepository.findOneBy({ id: id })
 
-    if (findClient) {
-        throw new AppError("Client already exists", 409)
+    if (!client) {
+        throw new AppError("Client not found", 401)
     }
-
-    const client = ClientRepository.create({
-        data
-    })
-
-    await ClientRepository.save(client)
-    return ClientSchemaResponse.parse(client)
+    await ClientRepository.delete(client)
+    return "Client deleted"
 }
 
-export { createClientService, DeleteClientService, UpdateClientService,GetClientService    }
+export { createClientService, DeleteClientService, UpdateClientService, GetClientsService }

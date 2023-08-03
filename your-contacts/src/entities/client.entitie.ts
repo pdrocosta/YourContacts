@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Column, CreateDateColumn, Entity, OneToMany,  PrimaryGeneratedColumn } from "typeorm"
 import { Contact } from "./contact.entite"
 
 
@@ -22,6 +22,7 @@ class Client {
 
     @OneToMany(() => Contact, (contact) => contact.client)
     contacts: Contact[]
+
 }
 
 export { Client }

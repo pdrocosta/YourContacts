@@ -1,15 +1,15 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity,  PrimaryGeneratedColumn } from "typeorm"
 
 @Entity("user")
-class User{
+class User {
     @PrimaryGeneratedColumn('increment')
     id: number
 
     @Column({ type: 'varchar', length: 45, unique: true })
     email: string
-    
-    @Column({ type: 'varchar', length: 22})
+
+    @Column({ type: 'varchar', length: 120 })
     password: string
 }
 
-export {User}
+export { User }
